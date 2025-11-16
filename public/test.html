@@ -1,34 +1,322 @@
 <!doctype html>
-<html>
-<head><meta charset="utf-8"><title>Nestlé Demo — Test UI</title></head>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Nestlé Demo — Product Explorer</title>
+  <style>
+    :root{
+      --bg:#f6f7fb;
+      --card:#ffffff;
+      --muted:#6b7280;
+      --accent:#0b5fff;
+      --accent-2:#0b7d3b;
+      --glass: rgba(255,255,255,0.6);
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+    html,body{height:100%;margin:0;background:linear-gradient(180deg,#fbfdff 0%,var(--bg) 100%);color:#0f1724}
+    .wrap{max-width:1100px;margin:28px auto;padding:20px}
+    header{display:flex;gap:16px;align-items:center;justify-content:space-between;margin-bottom:18px}
+    .brand{display:flex;gap:12px;align-items:center}
+    .logo { width:54px;height:54px;border-radius:10px;background:linear-gradient(135deg,var(--accent) 0%,var(--accent-2) 100%);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:18px}
+    h1{font-size:20px;margin:0}
+    p.lead{margin:0;color:var(--muted);font-size:13px}
+    .controls{display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap}
+    .card{background:var(--card);border-radius:12px;padding:14px;box-shadow:0 6px 18px rgba(12,15,30,0.06);border:1px solid rgba(15,23,36,0.04)}
+    .form-grid{display:flex;gap:12px}
+    .field{display:flex;flex-direction:column;gap:6px;font-size:13px}
+    select, button{padding:8px 10px;border-radius:8px;border:1px solid #e6e9ef;background:white;font-size:14px}
+    .btn-primary{background:linear-gradient(90deg,var(--accent),#176bff);color:white;border:0;cursor:pointer;box-shadow:0 6px 18px rgba(11,95,255,0.12)}
+    .btn-ghost{background:transparent;border:1px solid #e6e9ef;color:var(--muted);cursor:pointer}
+    .actions{display:flex;gap:8px}
+    main{display:grid;grid-template-columns:330px 1fr;gap:18px;align-items:start}
+    /* left panel */
+    .leftpanel .card{position:sticky;top:20px}
+    .summary{margin-top:12px;font-size:13px;color:var(--muted)}
+    /* results */
+    .results{display:grid;gap:12px}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+    .prod{display:flex;flex-direction:column;background:var(--card);border-radius:10px;overflow:hidden;border:1px solid rgba(12,15,30,0.03)}
+    .prod .media{height:140px;background:#eee;background-size:cover;background-position:center}
+    .prod .body{padding:12px;display:flex;flex-direction:column;gap:8px}
+    .title{font-weight:600;font-size:15px}
+    .benefit{font-size:13px;color:var(--muted);min-height:36px}
+    .prod .meta{display:flex;justify-content:space-between;align-items:center;margin-top:auto}
+    .chip{font-size:12px;padding:6px 8px;border-radius:999px;background:linear-gradient(90deg,rgba(11,95,255,0.08),rgba(11,125,59,0.04));color:#08306a}
+    .coupon-btn{padding:8px 10px;border-radius:8px;background:#0b7d3b;color:#fff;border:0;cursor:pointer}
+    .placeholder{padding:28px;border-radius:8px;background:linear-gradient(180deg,#fff,#fbfdff);text-align:center;color:var(--muted);border:1px dashed #e6e9ef}
+    /* loading */
+    .loading{padding:18px;text-align:center;color:var(--muted)}
+    /* coupon modal */
+    .toast{position:fixed;right:20px;bottom:20px;background:var(--card);padding:12px 16px;border-radius:10px;box-shadow:0 10px 30px rgba(10,12,30,0.12);border:1px solid rgba(10,12,30,0.04);min-width:220px}
+    .toast h4{margin:0;font-size:13px}
+    .toast p{margin:6px 0 0;color:var(--muted);font-size:13px}
+    .kicker{font-size:12px;color:var(--muted)}
+    footer{margin-top:28px;color:var(--muted);font-size:13px;text-align:center}
+    @media (max-width:900px){
+      main{grid-template-columns:1fr;gap:12px}
+      .leftpanel .card{position:relative;top:auto}
+    }
+  </style>
+</head>
 <body>
-  <h2>Nestlé Demo — Test UI</h2>
-  <label>Who: <select id="who"><option value="">--</option><option value="self">Self</option><option value="child">Child</option><option value="family">Family</option></select></label><br/>
-  <label>Type: <select id="type"><option value="">--</option><option value="coffee">Coffee</option><option value="baby">Infant</option><option value="cereal">Cereal</option><option value="snack">Snack</option><option value="health">Health</option></select></label><br/>
-  <label>Diet: <select id="diet"><option value="">--</option><option value="sugar-free">Sugar-free</option><option value="lactose-free">Lactose-free</option><option value="high-protein">High-protein</option></select></label><br/><br/>
-  <button onclick="getRecs()">Get Recommendations</button>
-  <button onclick="issueCoupon()">Issue Coupon</button>
-  <pre id="out" style="background:#f4f4f4;padding:10px"></pre>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="logo">N</div>
+        <div>
+          <h1>Nestlé Demo — Product Explorer</h1>
+          <p class="lead">Explore sample Nestlé products, try the nutrition quiz, and claim placeholder coupons.</p>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn-ghost" id="healthBtn">Health</button>
+        <button class="btn-ghost" id="refreshBtn">Reload</button>
+      </div>
+    </header>
+
+    <main>
+      <aside class="leftpanel">
+        <div class="card">
+          <div style="display:flex;gap:10px;align-items:center">
+            <div style="width:46px;height:46px;border-radius:8px;background:linear-gradient(90deg,var(--accent),#3b82f6);display:flex;align-items:center;justify-content:center;color:white;font-weight:700">NP</div>
+            <div>
+              <strong>Interactive Recommender</strong>
+              <div class="summary">Quickly narrow down product ideas using three simple questions.</div>
+            </div>
+          </div>
+
+          <div style="margin-top:12px" class="form-grid">
+            <div style="flex:1" class="field">
+              <label for="who">Who</label>
+              <select id="who">
+                <option value="">Select</option>
+                <option value="self">Self</option>
+                <option value="child">Child</option>
+                <option value="family">Family</option>
+                <option value="gift">Gift</option>
+              </select>
+            </div>
+            <div style="flex:1" class="field">
+              <label for="type">Type</label>
+              <select id="type">
+                <option value="">Any</option>
+                <option value="coffee">Coffee</option>
+                <option value="baby">Infant</option>
+                <option value="cereal">Cereal</option>
+                <option value="snack">Snack</option>
+                <option value="health">Health</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="margin-top:10px;display:flex;gap:10px;align-items:center">
+            <div style="flex:1" class="field">
+              <label for="diet">Diet</label>
+              <select id="diet">
+                <option value="">No preference</option>
+                <option value="sugar-free">Sugar-free</option>
+                <option value="lactose-free">Lactose-free</option>
+                <option value="high-protein">High-protein</option>
+              </select>
+            </div>
+            <div style="min-width:120px">
+              <button class="btn-primary" id="findBtn">Get Recommendations</button>
+            </div>
+          </div>
+
+          <div style="margin-top:12px" class="summary">
+            Try different combos — click <strong>Get Recommendations</strong> to see live results. Use <em>Issue Coupon</em> on a card to simulate coupon issuance.
+          </div>
+        </div>
+
+        <div style="height:12px"></div>
+
+        <div class="card" style="padding:12px;margin-top:12px">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div>
+              <strong>Quick actions</strong>
+              <div class="kicker">Test endpoints and flows</div>
+            </div>
+            <div style="display:flex;gap:8px">
+              <button class="btn-ghost" id="openQuiz">Quiz</button>
+              <button class="btn-ghost" id="issueAny">Issue Coupon</button>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <section>
+        <div class="results">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div>
+              <strong>Results</strong>
+              <div class="kicker" id="resultsMeta">No recommendation yet — click Get Recommendations</div>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center">
+              <button class="btn-ghost" id="clearBtn">Clear</button>
+            </div>
+          </div>
+
+          <div id="container" class="grid">
+            <div class="placeholder card">
+              <div style="font-weight:600">Start exploring</div>
+              <div style="margin-top:8px;color:var(--muted)">Your recommended products will appear here as cards with coupon actions.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      Prototype · demo · placeholder coupons — not for production use.
+    </footer>
+  </div>
+
+  <!-- coupon toast -->
+  <div id="toastWrap" style="display:none"></div>
 
   <script>
-    const out = document.getElementById('out');
-    async function getRecs(){
-      const who = document.getElementById('who').value;
-      const type = document.getElementById('type').value;
-      const diet = document.getElementById('diet').value;
-      const res = await fetch('/compute-recs', {
-        method:'POST', 
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({who,type,diet})
+    // convenience
+    const findBtn = document.getElementById('findBtn');
+    const container = document.getElementById('container');
+    const resultsMeta = document.getElementById('resultsMeta');
+    const whoEl = document.getElementById('who');
+    const typeEl = document.getElementById('type');
+    const dietEl = document.getElementById('diet');
+    const clearBtn = document.getElementById('clearBtn');
+    const toastWrap = document.getElementById('toastWrap');
+    const openQuiz = document.getElementById('openQuiz');
+    const healthBtn = document.getElementById('healthBtn');
+    const refreshBtn = document.getElementById('refreshBtn');
+    const issueAny = document.getElementById('issueAny');
+
+    function setLoading(state){
+      container.innerHTML = '';
+      if(state){
+        const el = document.createElement('div');
+        el.className = 'loading card';
+        el.textContent = 'Loading recommendations...';
+        container.appendChild(el);
+      }
+    }
+
+    function showPlaceholder(){
+      container.innerHTML = '';
+      const ph = document.createElement('div');
+      ph.className = 'placeholder card';
+      ph.innerHTML = '<div style="font-weight:600">No results yet</div><div style="margin-top:8px;color:var(--muted)">Click Get Recommendations to fetch suggestions from the demo backend.</div>';
+      container.appendChild(ph);
+      resultsMeta.textContent = 'No recommendation yet — click Get Recommendations';
+    }
+
+    function showToast(code){
+      toastWrap.innerHTML = '';
+      const box = document.createElement('div');
+      box.className = 'toast';
+      box.innerHTML = '<h4>Coupon issued</h4><p style="font-weight:700;margin-top:6px">'+code+'</p><p class="kicker">This is a placeholder code — redeem at checkout (demo)</p>';
+      toastWrap.appendChild(box);
+      toastWrap.style.display = 'block';
+      setTimeout(()=>{ toastWrap.style.display = 'none'; }, 7000);
+    }
+
+    function createProductCard(p){
+      const el = document.createElement('article');
+      el.className = 'prod card';
+      el.innerHTML = `
+        <div class="media" style="background-image:url('${p.img}')"></div>
+        <div class="body">
+          <div class="title">${escapeHtml(p.name)}</div>
+          <div class="benefit">${escapeHtml(p.benefit)}</div>
+          <div class="meta">
+            <div class="chip">${escapeHtml(p.category)}</div>
+            <div style="display:flex;gap:8px;align-items:center">
+              <button class="coupon-btn" data-id="${escapeHtml(p.id)}" data-coupon="${escapeHtml(p.coupon)}">Get coupon</button>
+            </div>
+          </div>
+        </div>
+      `;
+      // attach coupon click
+      el.querySelector('.coupon-btn').addEventListener('click', async (ev)=>{
+        const btn = ev.currentTarget;
+        btn.disabled = true;
+        btn.textContent = 'Issuing...';
+        try {
+          const res = await fetch('/issue-coupon', {method:'POST'});
+          if(!res.ok) throw new Error('Failed');
+          const json = await res.json();
+          showToast(json.code || btn.dataset.coupon || 'N/A');
+          btn.textContent = 'Issued';
+        } catch(err){
+          btn.textContent = 'Try again';
+          alert('Could not issue coupon — check logs or redeploy backend');
+        } finally { setTimeout(()=>{ btn.disabled=false; btn.textContent='Get coupon'}, 1600); }
       });
-      const json = await res.json();
-      out.textContent = JSON.stringify(json, null, 2);
+      return el;
     }
-    async function issueCoupon(){
-      const res = await fetch('/issue-coupon', {method:'POST'});
-      const json = await res.json();
-      out.textContent = JSON.stringify(json, null, 2);
+
+    async function getRecs(){
+      const who = whoEl.value;
+      const type = typeEl.value;
+      const diet = dietEl.value;
+      setLoading(true);
+      resultsMeta.textContent = 'Fetching recommendations...';
+      try {
+        const res = await fetch('/compute-recs', {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({who,type,diet})
+        });
+        if(!res.ok) throw new Error('Server error');
+        const json = await res.json();
+        container.innerHTML = '';
+        if(!json.recs || json.recs.length===0){
+          showPlaceholder();
+          resultsMeta.textContent = 'No products matched — try different filters';
+          return;
+        }
+        // render cards
+        const grid = document.createElement('div');
+        grid.className = 'grid';
+        json.recs.forEach(r=>{
+          grid.appendChild(createProductCard(r));
+        });
+        container.appendChild(grid);
+        resultsMeta.textContent = `Showing ${json.recs.length} recommendation(s) — based on your filters`;
+      } catch(err){
+        container.innerHTML = '';
+        const errEl = document.createElement('div');
+        errEl.className = 'card';
+        errEl.style.color = 'var(--muted)';
+        errEl.textContent = 'Could not fetch recommendations — try reloading the service.';
+        container.appendChild(errEl);
+        resultsMeta.textContent = 'Error fetching recommendations';
+        console.error(err);
+      }
     }
+
+    // small helpers
+    function escapeHtml(s){ if(!s) return ''; return s.replace(/[&<>"']/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c])); }
+
+    // wire buttons
+    findBtn.addEventListener('click', getRecs);
+    clearBtn.addEventListener('click', showPlaceholder);
+    openQuiz.addEventListener('click', ()=>{ alert('Quiz UI will be added soon — want me to add now? Reply "Add quiz"');});
+    refreshBtn.addEventListener('click', ()=> location.reload());
+    healthBtn.addEventListener('click', async ()=> {
+      try {
+        const r = await fetch('/health'); const txt = await r.text();
+        alert('Health: '+txt);
+      } catch(e){ alert('Health check failed'); }
+    });
+    issueAny.addEventListener('click', async ()=>{
+      try {
+        const r = await fetch('/issue-coupon',{method:'POST'}); const j=await r.json(); showToast(j.code);
+      } catch(e){ alert('Issue failed'); }
+    });
+
+    // initial state
+    showPlaceholder();
   </script>
 </body>
 </html>
