@@ -1,0 +1,34 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Nestlé Demo — Test UI</title></head>
+<body>
+  <h2>Nestlé Demo — Test UI</h2>
+  <label>Who: <select id="who"><option value="">--</option><option value="self">Self</option><option value="child">Child</option><option value="family">Family</option></select></label><br/>
+  <label>Type: <select id="type"><option value="">--</option><option value="coffee">Coffee</option><option value="baby">Infant</option><option value="cereal">Cereal</option><option value="snack">Snack</option><option value="health">Health</option></select></label><br/>
+  <label>Diet: <select id="diet"><option value="">--</option><option value="sugar-free">Sugar-free</option><option value="lactose-free">Lactose-free</option><option value="high-protein">High-protein</option></select></label><br/><br/>
+  <button onclick="getRecs()">Get Recommendations</button>
+  <button onclick="issueCoupon()">Issue Coupon</button>
+  <pre id="out" style="background:#f4f4f4;padding:10px"></pre>
+
+  <script>
+    const out = document.getElementById('out');
+    async function getRecs(){
+      const who = document.getElementById('who').value;
+      const type = document.getElementById('type').value;
+      const diet = document.getElementById('diet').value;
+      const res = await fetch('/compute-recs', {
+        method:'POST', 
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({who,type,diet})
+      });
+      const json = await res.json();
+      out.textContent = JSON.stringify(json, null, 2);
+    }
+    async function issueCoupon(){
+      const res = await fetch('/issue-coupon', {method:'POST'});
+      const json = await res.json();
+      out.textContent = JSON.stringify(json, null, 2);
+    }
+  </script>
+</body>
+</html>
