@@ -1,0 +1,77 @@
+[
+  {
+    "id": "p001",
+    "name": "Nescaf\u00e9 Classic 200g",
+    "category": "Coffee & Hot Beverages",
+    "benefit": "Rich aroma, quick brew",
+    "img": "https://via.placeholder.com/300x200?text=Nescafe+Classic",
+    "coupon": "COFFEE5",
+    "popularity": 80,
+    "tags": [
+      "coffee"
+    ]
+  },
+  {
+    "id": "p002",
+    "name": "NIDO Fortified Milk Powder",
+    "category": "Dairy & Powdered Milk",
+    "benefit": "Fortified with vitamins & minerals",
+    "img": "https://via.placeholder.com/300x200?text=NIDO",
+    "coupon": "MILK10",
+    "popularity": 75,
+    "tags": [
+      "milk",
+      "calcium"
+    ]
+  },
+  {
+    "id": "p003",
+    "name": "KitKat 4-finger",
+    "category": "Confectionery & Snacks",
+    "benefit": "Crispy wafer with chocolate",
+    "img": "https://via.placeholder.com/300x200?text=KitKat",
+    "coupon": "SNACK5",
+    "popularity": 90,
+    "tags": [
+      "snack",
+      "chocolate"
+    ]
+  },
+  {
+    "id": "p004",
+    "name": "Cerelac Infant Cereal",
+    "category": "Infant & Child Nutrition",
+    "benefit": "Nutritionally balanced infant cereal",
+    "img": "https://via.placeholder.com/300x200?text=Cerelac",
+    "coupon": "BABY15",
+    "popularity": 65,
+    "tags": [
+      "infant"
+    ]
+  },
+  {
+    "id": "p005",
+    "name": "Nestl\u00e9 Corn Flakes 250g",
+    "category": "Cereals & Breakfast",
+    "benefit": "Crunchy breakfast cereal",
+    "img": "https://via.placeholder.com/300x200?text=Corn+Flakes",
+    "coupon": "CEREAL5",
+    "popularity": 60,
+    "tags": [
+      "cereal"
+    ]
+  },
+  {
+    "id": "p006",
+    "name": "Nutren Protein Sachet",
+    "category": "Health & Wellness",
+    "benefit": "High-protein nutritional supplement",
+    "img": "https://via.placeholder.com/300x200?text=Nutren",
+    "coupon": "HEALTH7",
+    "popularity": 50,
+    "tags": [
+      "protein",
+      "sugar-free"
+    ]
+  }
+]

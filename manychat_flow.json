@@ -1,0 +1,11 @@
+{
+  "version": "1.0",
+  "name": "Nestle Product Demo - Minimal",
+  "blocks": [
+    {
+      "id": "welcome",
+      "type": "message",
+      "name": "Welcome"
+    }
+  ]
+}
